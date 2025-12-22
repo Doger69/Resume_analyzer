@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Resume - AI Resume Builder</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    body {
+      background: #f9fafb;
+      color: #111827;
+    }
+
+    /* Navbar */
+    header {
+      background: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 5%;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    header h1 {
+      color: #2563eb;
+      font-size: 1.7rem;
+      font-weight: bold;
+    }
+
+    nav a {
+      margin: 0 1rem;
+      text-decoration: none;
+      color: #374151;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #2563eb;
+    }
+
+    .btn {
+      background: #2563eb;
+      color: white;
+      padding: 0.6rem 1.4rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background 0.3s;
+    }
+
+    .btn:hover {
+      background: #1d4ed8;
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 6rem 2rem;
+      background: linear-gradient(to right, #eff6ff, #ffffff);
+    }
+
+    .hero h2 {
+      font-size: 2.8rem;
+      margin-bottom: 1rem;
+      color: #111827;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: #4b5563;
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+
+    .hero .btn {
+      font-size: 1.1rem;
+    }
+
+    /* Features */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      padding: 4rem 5%;
+      background: #fff;
+    }
+
+    .feature-card {
+      background: #f3f4f6;
+      padding: 2rem;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .feature-card h3 {
+      color: #2563eb;
+      margin-bottom: 1rem;
+    }
+
+    /* How It Works */
+    .steps {
+      background: #f9fafb;
+      text-align: center;
+      padding: 5rem 5%;
+    }
+
+    .steps h2 {
+      color: #111827;
+      margin-bottom: 2rem;
+      font-size: 2rem;
+    }
+
+    .step-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2rem;
+    }
+
+    .step {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 10px;
+      width: 280px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .step h3 {
+      color: #2563eb;
+      margin-bottom: 0.8rem;
+    }
+
+    /* Templates Showcase */
+    .templates {
+      background: #fff;
+      padding: 5rem 5%;
+      text-align: center;
+    }
+
+    .templates h2 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      color: #111827;
+    }
+
+    .template-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .template {
+      background: #f3f4f6;
+      border-radius: 10px;
+      height: 280px;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Testimonials */
+    .testimonials {
+      background: #f9fafb;
+      padding: 5rem 5%;
+      text-align: center;
+    }
+
+    .testimonials h2 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      color: #111827;
+    }
+
+    .testimonial-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2rem;
+    }
+
+    .testimonial {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      width: 300px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .testimonial p {
+      color: #4b5563;
+      font-style: italic;
+      margin-bottom: 1rem;
+    }
+
+    .testimonial h4 {
+      color: #2563eb;
+    }
+
+    /* Stats */
+    .stats {
+      background: #2563eb;
+      color: white;
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+
+    .stats h2 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .stats-grid {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 3rem;
+    }
+
+    .stat {
+      font-size: 1.2rem;
+    }
+
+    .stat span {
+      display: block;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    /* Pricing */
+    .pricing {
+      background: #fff;
+      padding: 5rem 5%;
+      text-align: center;
+    }
+
+    .pricing h2 {
+      margin-bottom: 2rem;
+      color: #111827;
+      font-size: 2rem;
+    }
+
+    .pricing-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2rem;
+    }
+
+    .price-card {
+      background: #f3f4f6;
+      padding: 2rem;
+      border-radius: 10px;
+      width: 260px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .price-card h3 {
+      color: #2563eb;
+      margin-bottom: 1rem;
+    }
+
+    .price-card p {
+      margin-bottom: 1rem;
+      color: #4b5563;
+    }
+
+    /* Final CTA */
+    .cta {
+      background: #2563eb;
+      color: white;
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+
+    .cta h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .cta p {
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Footer */
+    footer {
+      background: #111827;
+      color: #9ca3af;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .hero h2 {
+        font-size: 2rem;
+      }
+      .features, .steps, .templates, .testimonials, .pricing {
+        padding: 3rem 2rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <header>
+    <h1>Smart Resume</h1>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">Templates</a>
+      <a href="#">AI Builder</a>
+      <a href="#">Pricing</a>
+      <a href="#">Contact</a>
+    </nav>
+    <a href="#" class="btn">Get Started</a>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <h2>Build a Job-Winning Resume with AI</h2>
+    <p>Upload your resume and let our AI help you match job descriptions, optimize content, and land interviews faster.</p>
+    <a href="#" class="btn">Create My Resume</a>
+  </section>
+
+  <!-- Features -->
+  <section class="features">
+    <div class="feature-card">
+      <h3>AI Suggestions</h3>
+      <p>Smart recommendations for improving your resume instantly.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Modern Templates</h3>
+      <p>Choose sleek and creative resume designs to stand out.</p>
+    </div>
+    <div class="feature-card">
+      <h3>Job Matching</h3>
+      <p>Our AI compares your resume with job postings for perfect matches.</p>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="steps">
+    <h2>How It Works</h2>
+    <div class="step-container">
+      <div class="step">
+        <h3>1. Upload Your Resume</h3>
+        <p>Drag and drop your existing resume or start from scratch.</p>
+      </div>
+      <div class="step">
+        <h3>2. AI Analyzes Your Resume</h3>
+        <p>Our NLP model evaluates your skills, keywords, and structure.</p>
+      </div>
+      <div class="step">
+        <h3>3. Get Suggestions & Apply</h3>
+        <p>Receive personalized feedback and job matches instantly.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Templates -->
+  <section class="templates">
+    <h2>Professional Resume Templates</h2>
+    <div class="template-grid">
+      <div class="template"></div>
+      <div class="template"></div>
+      <div class="template"></div>
+      <div class="template"></div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="testimonials">
+    <h2>What Our Users Say</h2>
+    <div class="testimonial-grid">
+      <div class="testimonial">
+        <p>“Smart Resume helped me get my dream job within a week!”</p>
+        <h4>– Sarah M.</h4>
+      </div>
+      <div class="testimonial">
+        <p>“The AI suggestions are spot-on. My resume looks so professional now.”</p>
+        <h4>– Ahmed R.</h4>
+      </div>
+      <div class="testimonial">
+        <p>“Beautiful templates and great matching accuracy!”</p>
+        <h4>– Emily J.</h4>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="stats">
+    <h2>Trusted by Professionals Worldwide</h2>
+    <div class="stats-grid">
+      <div class="stat">
+        <span>1M+</span> Resumes Created
+      </div>
+      <div class="stat">
+        <span>500K+</span> Job Matches
+      </div>
+      <div class="stat">
+        <span>98%</span> Success Rate
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="pricing">
+    <h2>Choose Your Plan</h2>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <h3>Basic</h3>
+        <p>Free access to limited templates.</p>
+        <a href="#" class="btn">Get Started</a>
+      </div>
+      <div class="price-card">
+        <h3>Pro</h3>
+        <p>AI suggestions + all templates access.</p>
+        <a href="#" class="btn">Upgrade</a>
+      </div>
+      <div class="price-card">
+        <h3>Premium</h3>
+        <p>Everything in Pro + job tracking tools.</p>
+        <a href="#" class="btn">Go Premium</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="cta">
+    <h2>Ready to Build Your Resume?</h2>
+    <p>Join thousands of professionals who use Smart Resume for their next career move.</p>
+    <a href="#" class="btn">Start Now</a>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 Smart Resume. All Rights Reserved.</p>
+    <p>Made with ❤️ by the Smart Resume Team</p>
+  </footer>
+</body>
+</html>
