@@ -1,68 +1,92 @@
-# SmartResume – AI-Powered Resume Analyzer and Interview Coach
+📄 Resume–Job Match Analyzer
 
-## Overview
-SmartResume is a Final Year Project (FYP) developed to help job seekers improve their resumes and prepare for interviews using Artificial Intelligence. The system analyzes resumes and job descriptions using Natural Language Processing (NLP) to calculate relevance, suggest improvements, and generate personalized interview questions. It also provides an interactive mock interview feature with AI-based feedback.
+A professional web application that analyzes how well a resume matches a job description using **Natural Language Processing (NLP)**. The system computes a match score and provides clear visual feedback to help job seekers optimize their resumes.
 
----
+🚀 Features
 
-## Problem Statement
-Job seekers often struggle to tailor their resumes for specific roles and lack personalized interview preparation. Recruiters spend very limited time reviewing resumes, making relevance critical. SmartResume addresses this problem by combining resume analysis, job matching, and interview coaching in a single intelligent platform.
+* Upload resume in **PDF format**
+* Paste any **job description**
+* Calculates match score using **TF-IDF + Cosine Similarity**
+* Modern progress bar visualization
+* Clear feedback: Low / Moderate / Excellent match
+* Clean, professional UI built with **Streamlit**
+* Lightweight and fast (no external APIs)
 
----
+🛠️ Tech Stack
 
-## Key Features
-- User registration and authentication  
-- Resume upload (PDF, DOCX, TXT)  
-- Job description analysis  
-- Resume-to-job matching score  
-- Resume improvement suggestions  
-- AI-generated interview questions  
-- Mock interview with real-time feedback  
-- Session history and progress tracking  
+* **Frontend:** Streamlit, Custom CSS
+* **Backend / NLP:** Python, Scikit-learn, NLTK
+* **PDF Processing:** PyPDF2
+* **Algorithm:** TF-IDF, Cosine Similarity
 
----
+📁 Project Structure
 
-## Technologies Used
+```
+resume_matcher/
+│
+├── app.py              # Frontend (UI + layout)
+├── utils.py            # Backend logic (text processing & similarity)
+├── requirements.txt    # Dependencies
+└── README.md
+```
 
-**Frontend**
-- React.js  
-- Tailwind CSS  
+⚙️ Installation & Setup
 
-**Backend**
-- Node.js  
-- Express.js  
-- JWT Authentication  
+1️⃣ Clone the Repository
 
-**Database**
-- MongoDB  
-
-**AI / Machine Learning**
-- Python  
-- spaCy  
-- NLTK  
-- Hugging Face Transformers  
-- Flask / FastAPI  
-
----
-
-## Installation & Setup
-
-1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/your-username/resume-job-match-analyzer.git
+cd resume-job-match-analyzer
+```
 
+2️⃣ Install Dependencies
 
-Install backend dependencies:
-npm install
-
-Install backend dependencies:
+```bash
 pip install -r requirements.txt
+```
 
-Install Python dependencies:
-pip install -r requirements.txt
+3️⃣ Run the Application
 
-Start the backend server:
-npm start
+```bash
+streamlit run app.py
+```
 
-Run the AI service:
-python app.py
+The application will open in your browser at:
+
+```
+http://localhost:8501
+```
+
+📊 How It Works
+
+1. Resume text is extracted from the uploaded PDF
+2. Job description text is cleaned and preprocessed
+3. Both texts are converted into **TF-IDF vectors**
+4. **Cosine similarity** is calculated between them
+5. A match percentage is displayed with visual feedback
+
+🧠 Algorithm Used
+
+* **TF-IDF (Term Frequency–Inverse Document Frequency)**
+* **Cosine Similarity**
+
+These techniques are commonly used in:
+* Applicant Tracking Systems (ATS)
+* Resume screening tools
+* Text similarity analysis
+
+🎯 Use Cases
+
+* Students and fresh graduates
+* Job seekers optimizing resumes
+* Learning NLP and text similarity
+* Portfolio project for software or data roles
+
+🔮 Future Enhancements
+
+* Keyword gap analysis
+* Resume improvement suggestions
+* ATS-style scoring
+* Export results as PDF
+* Deployment to Streamlit Cloud
+
