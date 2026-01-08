@@ -1,5 +1,15 @@
 import streamlit as st
-from utils import extract_text_from_pdf, calculate_similarity
+import PyPDF2
+import matplotlib.pyplot as plt
+
+from utils import (
+    calculate_similarity,
+    keyword_gap_analysis,
+    ats_score,
+    resume_suggestions
+)
+from pdf_report import generate_pdf
+
 
 # ================== PAGE CONFIG ==================
 st.set_page_config(
@@ -8,7 +18,8 @@ st.set_page_config(
     layout="wide"
 )
 
-# ================== CUSTOM CSS ==================
+
+# ================== GLOBAL STYLES ==================
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
@@ -18,80 +29,82 @@ html, body, [class*="css"] {
 }
 
 .stApp {
-    background: radial-gradient(circle at top, #111827, #020617);
+    background: radial-gradient(circle at top, #020617, #020617);
 }
 
-.main {
-    padding: 3rem 6rem;
+.card {
+    background: linear-gradient(145deg, #020617, #020617);
+    border-radius: 20px;
+    padding: 28px;
+    border: 1px solid #1e293b;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.55);
+    margin-bottom: 25px;
 }
 
-/* Header */
 .hero-title {
-    font-size: 52px;
+    font-size: 54px;
     font-weight: 800;
     text-align: center;
-    color: #f8fafc;
 }
+
 .hero-subtitle {
     font-size: 18px;
-    color: #9ca3af;
+    color: #94a3b8;
     text-align: center;
     margin-bottom: 60px;
 }
 
-/* Cards */
-.card {
-    background: linear-gradient(145deg, #0f172a, #020617);
-    border-radius: 20px;
-    padding: 30px;
-    box-shadow: 0 25px 60px rgba(0,0,0,0.5);
-}
-
-/* Buttons */
-.stButton button {
-    width: 100%;
-    padding: 16px;
-    font-size: 18px;
-    font-weight: 600;
-    border-radius: 16px;
-    border: none;
-    background: linear-gradient(90deg, #2563eb, #22c55e);
-}
-
-/* Score */
 .score {
-    font-size: 48px;
+    font-size: 52px;
     font-weight: 800;
 }
 
-/* Progress bar */
 .progress-bg {
-    width: 100%;
-    height: 22px;
     background: #020617;
-    border-radius: 14px;
-    margin-top: 12px;
+    height: 20px;
+    border-radius: 12px;
+    margin-top: 6px;
 }
+
 .progress-fill {
-    height: 100%;
-    border-radius: 14px;
+    height: 20px;
+    border-radius: 12px;
     background: linear-gradient(90deg, #ef4444, #f59e0b, #22c55e);
 }
-
-/* Status colors */
-.low { color: #ef4444; }
-.mid { color: #f59e0b; }
-.high { color: #22c55e; }
-
 </style>
 """, unsafe_allow_html=True)
+
 
 # ================== HEADER ==================
 st.markdown('<div class="hero-title">Resume–Job Match Analyzer</div>', unsafe_allow_html=True)
 st.markdown(
-    '<div class="hero-subtitle">Upload your resume and instantly evaluate how well it matches a job description</div>',
+    '<div class="hero-subtitle">Professional ATS-style resume evaluation powered by NLP</div>',
     unsafe_allow_html=True
 )
+
+
+# ================== FUNCTIONS ==================
+def extract_text_from_pdf(file):
+    reader = PyPDF2.PdfReader(file)
+    text = ""
+    for page in reader.pages:
+        t = page.extract_text()
+        if t:
+            text += t
+    return text
+
+
+def progress_bar(label, value):
+    st.markdown(f"""
+    <div style="margin-bottom:18px;">
+        <strong>{label}</strong>
+        <div class="progress-bg">
+            <div class="progress-fill" style="width:{value}%"></div>
+        </div>
+        <div style="margin-top:6px; font-weight:600;">{value}%</div>
+    </div>
+    """, unsafe_allow_html=True)
+
 
 # ================== INPUT SECTION ==================
 col1, col2 = st.columns(2, gap="large")
@@ -99,62 +112,98 @@ col1, col2 = st.columns(2, gap="large")
 with col1:
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.subheader("📄 Upload Resume")
-    resume_file = st.file_uploader(
-        "Upload your resume in PDF format",
-        type=["pdf"],
-        label_visibility="collapsed"
-    )
+    resume = st.file_uploader("", type=["pdf"])
     st.markdown('</div>', unsafe_allow_html=True)
 
 with col2:
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.subheader("📝 Job Description")
-    job_description = st.text_area(
-        "Paste the job description here",
-        height=220,
-        label_visibility="collapsed"
-    )
+    job_desc = st.text_area("", height=240)
     st.markdown('</div>', unsafe_allow_html=True)
 
-st.markdown("<br>", unsafe_allow_html=True)
 
 # ================== ANALYZE BUTTON ==================
 st.markdown('<div class="card">', unsafe_allow_html=True)
-analyze = st.button("🔍 Analyze Match")
+analyze = st.button("🔍 Analyze Match", use_container_width=True)
 st.markdown('</div>', unsafe_allow_html=True)
+
 
 # ================== RESULTS ==================
 if analyze:
-    if not resume_file or not job_description:
+    if not resume or not job_desc:
         st.warning("Please upload a resume and paste a job description.")
     else:
         with st.spinner("Analyzing resume..."):
-            resume_text = extract_text_from_pdf(resume_file)
-            score = calculate_similarity(resume_text, job_description)
+            resume_text = extract_text_from_pdf(resume)
 
-        st.markdown("<br>", unsafe_allow_html=True)
+            score = calculate_similarity(resume_text, job_desc)
+            missing = keyword_gap_analysis(resume_text, job_desc)
+            ats = ats_score(score, missing)
+            suggestions = resume_suggestions(score, missing)
+
+        # ================== SCORES ==================
+        colA, colB = st.columns(2, gap="large")
+
+        with colA:
+            st.markdown('<div class="card">', unsafe_allow_html=True)
+            st.subheader("📊 Match Scores")
+            progress_bar("Similarity Score", score)
+            progress_bar("ATS Compatibility", ats)
+            st.markdown('</div>', unsafe_allow_html=True)
+
+        with colB:
+            st.markdown('<div class="card">', unsafe_allow_html=True)
+            st.subheader("📈 ATS Overview")
+
+            fig, ax = plt.subplots()
+            ax.pie(
+                [ats, 100 - ats],
+                startangle=90,
+                wedgeprops=dict(width=0.35)
+            )
+            ax.set_aspect("equal")
+            st.pyplot(fig)
+
+            st.markdown('</div>', unsafe_allow_html=True)
+
+        # ================== KEYWORD GAP ==================
         st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.subheader("📊 Match Result")
+        st.subheader("🧩 Missing Keywords")
 
-        if score < 40:
-            status_class = "low"
-            message = "Low match. Consider improving your resume keywords."
-        elif score < 70:
-            status_class = "mid"
-            message = "Moderate match. Some improvements recommended."
+        if missing:
+            for kw in missing[:15]:
+                st.markdown(
+                    f"""
+                    <div style="margin-bottom:8px;">
+                        <span style="font-weight:600;">{kw}</span>
+                        <div class="progress-bg">
+                            <div class="progress-fill" style="width:35%"></div>
+                        </div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
         else:
-            status_class = "high"
-            message = "Excellent match. Your resume aligns well."
-
-        st.markdown(f'<div class="score {status_class}">{score}%</div>', unsafe_allow_html=True)
-
-        st.markdown(f"""
-        <div class="progress-bg">
-            <div class="progress-fill" style="width:{score}%"></div>
-        </div>
-        """, unsafe_allow_html=True)
-
-        st.markdown(f"<p class='{status_class}' style='margin-top:15px;font-size:16px;'>{message}</p>",
-                    unsafe_allow_html=True)
+            st.success("No major keyword gaps found.")
 
         st.markdown('</div>', unsafe_allow_html=True)
+
+        # ================== SUGGESTIONS ==================
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        st.subheader("💡 Resume Improvement Suggestions")
+
+        for s in suggestions:
+            st.markdown(f"- {s}")
+
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        # ================== PDF EXPORT ==================
+        pdf_file = generate_pdf(score, ats, missing, suggestions)
+
+        with open(pdf_file, "rb") as f:
+            st.download_button(
+                "📄 Download Professional PDF Report",
+                f,
+                file_name="resume_match_report.pdf",
+                use_container_width=True
+            )
